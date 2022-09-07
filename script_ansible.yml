@@ -1,0 +1,42 @@
+---
+- name: Lancement de deux semantiques patch
+  strategy: free
+  hosts: all
+  tasks:
+    - name: Preparation du repertoire result
+      shell: 
+        "cp ~/linuxes/script_parrallele.sh  ~/Dune_fault_linux/faults-in-Linux/faults"
+    - name: test1
+      shell:
+        "chmod +x  ~/Dune_fault_linux/faults-in-Linux/faults/script_parrallele.sh"
+    - name: test2
+      shell:
+        "cd ~/Dune_fault_linux/faults-in-Linux/faults && make && make init"
+    - name: test3
+      shell:
+        "cd ~/Dune_fault_linux/faults-in-Linux/faults && cp /usr/local/share/herodotos/Makefile.prj ./results/linuxes/Makefiile"
+    - name: test4
+      shell:
+        "cp -r ~/Dune_fault_linux/faults-in-Linux/faults/results ~/linuxes"
+
+- name: play2
+  strategy: free
+  hosts: noeud1
+  tasks:
+    - name: ret6.cocci sur le noeud1
+      async: 1800
+      poll: 0
+      shell: script_parrallele.sh ret6.cocci linux-2.3.40
+      args:
+        chdir: ~/Dune_fault_linux/faults-in-Linux/faults/ 
+
+- name: play3
+  hosts: noeud2
+  tasks:
+    - name: null_ref6 sur le noeud2
+      async: 1800
+      poll: 0
+      shell: script_parrallele.sh null_ref6.cocci linux-2.3.40
+      args: 
+        chdir: ~/Dune_fault_linux/faults-in-Linux/faults
+

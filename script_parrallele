@@ -1,0 +1,25 @@
+#!/bin/bash
+
+#Script pour coccinelle
+
+machine=("dahu-17.grenoble.grid5000.fr" "dahu-24.grenoble.grid5000.fr" "dahu-28.grenoble.grid5000.fr")
+nbre_machine=3
+FLAGS=""
+INC=~/coccinelle/scripts/coccicheck/include
+semantic_patch=~/coccinelle/scripts/coccicheck/cocci/*.cocci
+indice_machine=1
+mkdir results
+for p in $semantic_patch;do
+temp=${p##*/}
+fichier=${temp%.cocci}
+ssh root@${machine[$indice_machine]} spatch -D diff $FLAGS -I $INC -cocci_file $p -dir /root/coccinelle/scripts/coccicheck/  \
+> /root/coccinelle/scripts/coccicheck/results/$fichier.out \
+2> /root/coccinelle/scripts/coccicheck/results/$fichier.log &
+if test "$indice_machine" -eq "$nbre_machine"
+then 
+        indice_machine=1
+else 
+        indice_machine=$((indice_machine + 1))
+fi 
+done
+wait

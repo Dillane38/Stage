@@ -1,0 +1,24 @@
+---
+name: cocci-par
+version: 19
+arch: x86_64
+description: update coccinelle for debian 11 (bullseye) for x86_64 - nfs
+author: bmahan
+visibility: private
+destructive: false
+os: linux
+image:
+  file: https://api.grid5000.fr/sid/sites/grenoble/public/bmahan/update_cocci_version_19.tar.zst
+  kind: tar
+  compression: zstd
+postinstalls:
+- archive: server:///grid5000/postinstalls/g5k-postinstall.tgz
+  compression: gzip
+  script: g5k-postinstall --net debian --fstab nfs --restrict-user current --disk-aliases
+boot:
+  kernel: "/vmlinuz"
+  initrd: "/initrd.img"
+  kernel_params: ''
+filesystem: ext4
+partition_type: 131
+multipart: false
